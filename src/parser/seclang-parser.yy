@@ -1253,7 +1253,10 @@ expression:
       }
     | CONFIG_DIR_SEC_MARKER
       {
-        driver.addSecMarker(modsecurity::utils::string::removeBracketsIfNeeded($1));
+        driver.addSecMarker(modsecurity::utils::string::removeBracketsIfNeeded($1),
+            /* file name */ std::unique_ptr<std::string>(new std::string(driver.ref.back())),
+            /* line number */ @1.end.line
+        );
       }
     | CONFIG_DIR_RULE_ENG CONFIG_VALUE_OFF
       {
