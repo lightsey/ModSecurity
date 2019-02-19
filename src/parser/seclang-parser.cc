@@ -2049,7 +2049,7 @@ namespace yy {
         }
 
         Operator *op = yystack_[1].value.as< std::unique_ptr<Operator> > ().release();
-        std::unique_ptr<Rule> rule(new Rule(
+        std::unique_ptr<RuleWithOperator> rule(new RuleWithOperator(
             /* op */ op,
             /* variables */ v,
             /* actions */ a,
@@ -2073,7 +2073,7 @@ namespace yy {
             v->push_back(i.release());
         }
 
-        std::unique_ptr<Rule> rule(new Rule(
+        std::unique_ptr<RuleWithOperator> rule(new RuleWithOperator(
             /* op */ yystack_[0].value.as< std::unique_ptr<Operator> > ().release(),
             /* variables */ v,
             /* actions */ NULL,
@@ -2100,7 +2100,7 @@ namespace yy {
               a->push_back(i.release());
             }
         }
-        std::unique_ptr<Rule> rule(new Rule(
+        std::unique_ptr<RuleWithOperator> rule(new RuleWithOperator(
             /* op */ NULL,
             /* variables */ NULL,
             /* actions */ a,

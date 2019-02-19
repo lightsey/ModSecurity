@@ -295,7 +295,7 @@ class Driver;
 #include "src/variables/status.h"
 
 using modsecurity::ModSecurity;
-using modsecurity::Rule;
+using modsecurity::RuleWithOperator;
 using modsecurity::Utils::GeoLookup;
 using modsecurity::Variables::Duration;
 using modsecurity::Variables::Env;

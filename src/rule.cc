@@ -380,7 +380,7 @@ std::string RuleWithActions::msg(Transaction *t) { return m_msg->data(t); }
 int RuleWithActions::severity() { return m_severity->m_severity; }
 
 
-Rule::Rule(Operator *op,
+RuleWithOperator::RuleWithOperator(Operator *op,
     Variables::Variables *_variables,
     std::vector<Action *> *actions,
     Transformations *transformations,
@@ -395,7 +395,7 @@ Rule::Rule(Operator *op,
     m_unconditional(false)  { /* */ }
 
 
-Rule::~Rule() {
+RuleWithOperator::~RuleWithOperator() {
     if (m_operator != NULL) {
         delete m_operator;
     }
@@ -412,7 +412,7 @@ Rule::~Rule() {
 }
 
 
-inline void Rule::updateMatchedVars(Transaction *trans, const std::string &key,
+inline void RuleWithOperator::updateMatchedVars(Transaction *trans, const std::string &key,
     const std::string &value) {
     ms_dbg_a(trans, 9, "Matched vars updated.");
     trans->m_variableMatchedVar.set(value, trans->m_variableOffset);
@@ -423,7 +423,7 @@ inline void Rule::updateMatchedVars(Transaction *trans, const std::string &key,
 }
 
 
-inline void Rule::cleanMatchedVars(Transaction *trans) {
+inline void RuleWithOperator::cleanMatchedVars(Transaction *trans) {
     ms_dbg_a(trans, 9, "Matched vars cleaned.");
     trans->m_variableMatchedVar.unset();
     trans->m_variableMatchedVars.unset();
@@ -433,7 +433,7 @@ inline void Rule::cleanMatchedVars(Transaction *trans) {
 
 
 
-bool Rule::executeOperatorAt(Transaction *trans, std::string key,
+bool RuleWithOperator::executeOperatorAt(Transaction *trans, std::string key,
     std::string value, std::shared_ptr<RuleMessage> ruleMessage) {
 #if MSC_EXEC_CLOCK_ENABLED
     clock_t begin = clock();
@@ -462,7 +462,7 @@ bool Rule::executeOperatorAt(Transaction *trans, std::string key,
 }
 
 
-void Rule::getVariablesExceptions(Transaction *t,
+void RuleWithOperator::getVariablesExceptions(Transaction *t,
     Variables::Variables *exclusion, Variables::Variables *addition) {
     for (auto &a : t->m_rules->m_exceptions.m_variable_update_target_by_tag) {
         if (containsTag(*a.first.get(), t) == false) {
@@ -508,7 +508,7 @@ void Rule::getVariablesExceptions(Transaction *t,
 }
 
 
-inline void Rule::getFinalVars(Variables::Variables *vars,
+inline void RuleWithOperator::getFinalVars(Variables::Variables *vars,
     Variables::Variables *exclusion, Transaction *trans) {
     Variables::Variables addition;
 
@@ -578,7 +578,7 @@ void RuleWithActions::executeAction(Transaction *trans,
 }
 
 
-bool Rule::evaluate(Transaction *trans,
+bool RuleWithOperator::evaluate(Transaction *trans,
     std::shared_ptr<RuleMessage> ruleMessage) {
     bool globalRet = false;
     Variables::Variables *variables = this->m_variables;
@@ -823,7 +823,7 @@ std::vector<actions::Action *> RuleWithActions::getActionsByName(const std::stri
 }
 
 
-std::string Rule::getOperatorName() { return m_operator->m_op; }
+std::string RuleWithOperator::getOperatorName() { return m_operator->m_op; }
 
 
 }  // namespace modsecurity
