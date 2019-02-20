@@ -42,7 +42,7 @@ class RuleMessage {
         ClientLogMessageInfo = 4
     };
 
-    explicit RuleMessage(RuleWithOperator *rule, Transaction *trans) :
+    explicit RuleMessage(RuleWithActions *rule, Transaction *trans) :
         m_accuracy(rule->m_accuracy),
         m_clientIpAddress(trans->m_clientIpAddress),
         m_data(""),
@@ -104,7 +104,7 @@ class RuleMessage {
     int m_phase;
     std::string m_reference;
     std::string m_rev;
-    RuleWithOperator *m_rule;
+    RuleWithActions *m_rule;
     std::shared_ptr<std::string> m_ruleFile;
     int m_ruleId;
     int m_ruleLine;
