@@ -36,8 +36,8 @@ bool ContainsWord::acceptableChar(const std::string& a, size_t pos) {
     return true;
 }
 
-bool ContainsWord::evaluate(Transaction *transaction, RuleWithOperator *rule,
-    const std::string &input, std::shared_ptr<RuleMessage> ruleMessage) {
+bool ContainsWord::evaluate(Transaction *transaction, RuleWithActions *rule,
+    const std::string &input, RuleMessage *ruleMessage) {
     std::string paramTarget(m_string->evaluate(transaction));
 
     if (paramTarget.empty()) {

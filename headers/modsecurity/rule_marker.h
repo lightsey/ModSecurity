@@ -45,9 +45,11 @@ class RuleMarker : public Rule {
         m_name(std::make_shared<std::string>(name)) { }
 
 
-    virtual bool evaluate(Transaction *transaction,
-        std::shared_ptr<RuleMessage> rm) override {
+    virtual bool evaluate(Transaction *transaction, RuleMessage &rm) override {
+        return evaluate(transaction);
+    }
 
+    virtual bool evaluate(Transaction *transaction) override {
         if (transaction->isInsideAMarker()) {
             if (*transaction->getCurrentMarker() == *m_name) {
                 transaction->removeMarker();

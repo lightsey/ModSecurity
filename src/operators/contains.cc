@@ -21,8 +21,8 @@
 namespace modsecurity {
 namespace operators {
 
-bool Contains::evaluate(Transaction *transaction, RuleWithOperator *rule,
-        const std::string &input, std::shared_ptr<RuleMessage> ruleMessage) {
+bool Contains::evaluate(Transaction *transaction, RuleWithActions *rule,
+        const std::string &input, RuleMessage *ruleMessage) {
     std::string p(m_string->evaluate(transaction));
     size_t offset = input.find(p);
 

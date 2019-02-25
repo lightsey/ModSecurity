@@ -13,32 +13,30 @@
  *
  */
 
-#include "src/rule_script.h"
+#include "modsecurity/rule_unconditional.h"
 
 
 namespace modsecurity {
 
-bool RuleScript::init(std::string *err) {
-    return m_lua.load(m_name, err);
-}
 
-bool RuleScript::evaluate(Transaction *trans,
+bool RuleUnconditional::evaluate(Transaction *trans,
     RuleMessage &ruleMessage) {
+    RuleWithActions::evaluate(trans, ruleMessage);
 
-    ms_dbg_a(trans, 4, " Executing script: " + m_name + ".");
+    // FIXME: This needs to be romeved on the runtime exeption review.
+    bool containsBlock = false;
 
-    bool containsDisruptive = false;
+    ms_dbg_a(trans, 4, "(Rule: " + std::to_string(m_ruleId) \
+        + ") Executing unconditional rule...");
 
     executeActionsIndependentOfChainedRuleResult(trans,
-        &containsDisruptive, ruleMessage);
+        &containsBlock, ruleMessage);
 
-    bool ret = m_lua.run(trans);
+    executeActionsAfterFullMatch(trans, containsBlock, ruleMessage);
 
-    if (ret) {
-        executeActionsAfterFullMatch(trans, containsDisruptive, ruleMessage);
-    }
+    performLogging(trans, ruleMessage);
 
-    return ret;
+    return true;
 }
 
 }  // namespace modsecurity

@@ -32,9 +32,8 @@ class ContainsWord : public Operator {
     explicit ContainsWord(std::unique_ptr<RunTimeString> param)
         : Operator("ContainsWord", std::move(param)) { }
 
-    bool evaluate(Transaction *transaction, RuleWithOperator *rule,
-        const std::string &str,
-        std::shared_ptr<RuleMessage> ruleMessage) override;
+    bool evaluate(Transaction *transaction, RuleWithActions *rule,
+        const std::string &str, RuleMessage *rm) override;
 
     bool acceptableChar(const std::string& a, size_t pos);
 };

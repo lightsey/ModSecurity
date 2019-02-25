@@ -38,9 +38,9 @@ class ValidateUtf8Encoding : public Operator {
     ValidateUtf8Encoding()
         : Operator("ValidateUtf8Encoding") { }
 
-    bool evaluate(Transaction *transaction, RuleWithOperator *rule,
+    bool evaluate(Transaction *transaction, RuleWithActions *rule,
         const std::string &str,
-        std::shared_ptr<RuleMessage> ruleMessage) override;
+        RuleMessage *ruleMessage) override;
 
     int detect_utf8_character(const unsigned char *p_read,
         unsigned int length);

@@ -46,8 +46,7 @@ class RuleWithOperator : public RuleWithActions {
             int lineNumber);
     virtual ~RuleWithOperator();
 
-    bool evaluate(Transaction *transaction,
-        std::shared_ptr<RuleMessage> rm) override;
+    bool evaluate(Transaction *transaction, RuleMessage &rm) override;
 
     void getVariablesExceptions(Transaction *t,
         Variables::Variables *exclusion, Variables::Variables *addition);
@@ -55,15 +54,11 @@ class RuleWithOperator : public RuleWithActions {
         Variables::Variables *eclusion, Transaction *trans);
 
     bool executeOperatorAt(Transaction *trasn, std::string key,
-        std::string value, std::shared_ptr<RuleMessage> rm);
+        std::string value, RuleMessage &rm);
 
     inline void updateMatchedVars(Transaction *trasn, const std::string &key,
         const std::string &value);
     inline void cleanMatchedVars(Transaction *trasn);
-
-
-
-    inline bool isUnconditional() { return m_operator == NULL; }
 
 
     std::string getOperatorName();
@@ -73,16 +68,9 @@ class RuleWithOperator : public RuleWithActions {
         return std::to_string(m_ruleId);
     }
 
-    std::unique_ptr<RuleWithOperator> m_chainedRuleChild;
-    RuleWithOperator *m_chainedRuleParent;
-
-
  private:
     modsecurity::Variables::Variables *m_variables;
     operators::Operator *m_operator;
-
-
-    bool m_unconditional:1;
 };
 
 
