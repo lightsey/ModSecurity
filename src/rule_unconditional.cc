@@ -23,16 +23,13 @@ bool RuleUnconditional::evaluate(Transaction *trans,
     RuleMessage &ruleMessage) {
     RuleWithActions::evaluate(trans, ruleMessage);
 
-    // FIXME: This needs to be romeved on the runtime exeption review.
-    bool containsBlock = false;
-
-    ms_dbg_a(trans, 4, "(Rule: " + std::to_string(m_ruleId) \
+    ms_dbg_a(trans, 4, "(Rule: " + std::to_string(getId()) \
         + ") Executing unconditional rule...");
 
     executeActionsIndependentOfChainedRuleResult(trans,
-        &containsBlock, ruleMessage);
+        ruleMessage);
 
-    executeActionsAfterFullMatch(trans, containsBlock, ruleMessage);
+    executeActionsAfterFullMatch(trans, ruleMessage);
 
     performLogging(trans, ruleMessage);
 

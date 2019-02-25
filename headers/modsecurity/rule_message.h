@@ -49,27 +49,27 @@ class RuleMessage {
      *
      */
     RuleMessage(RuleWithActions *rule, Transaction *trans) :
-        m_accuracy(rule->m_accuracy),
+        m_accuracy(rule->getAccuracy()),
         m_clientIpAddress(trans->m_clientIpAddress),
         m_data(""),
         m_id(trans->m_id),
         m_isDisruptive(false),
         m_match(""),
-        m_maturity(rule->m_maturity),
+        m_maturity(rule->getMaturity()),
         m_message(""),
         m_noAuditLog(false),
         m_phase(rule->getPhase() - 1),
         m_reference(""),
-        m_rev(rule->m_rev),
+        m_rev(*rule->getRevision()),
         m_rule(rule),
         m_ruleFile(rule->getFileName()),
-        m_ruleId(rule->m_ruleId),
+        m_ruleId(rule->getId()),
         m_ruleLine(rule->getLineNumber()),
         m_saveMessage(true),
         m_serverIpAddress(trans->m_serverIpAddress),
         m_severity(0),
         m_uriNoQueryStringDecoded(trans->m_uri_no_query_string_decoded),
-        m_ver(rule->m_ver)
+        m_ver(*rule->getVersion())
     { }
 
     RuleMessage(RuleMessage *rule) :

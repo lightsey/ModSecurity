@@ -27,15 +27,13 @@ bool RuleScript::evaluate(Transaction *trans,
 
     ms_dbg_a(trans, 4, " Executing script: " + m_name + ".");
 
-    bool containsDisruptive = false;
-
     executeActionsIndependentOfChainedRuleResult(trans,
-        &containsDisruptive, ruleMessage);
+        ruleMessage);
 
     bool ret = m_lua.run(trans);
 
     if (ret) {
-        executeActionsAfterFullMatch(trans, containsDisruptive, ruleMessage);
+        executeActionsAfterFullMatch(trans, ruleMessage);
     }
 
     return ret;
