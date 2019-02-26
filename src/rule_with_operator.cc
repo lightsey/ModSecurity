@@ -309,15 +309,18 @@ bool RuleWithOperator::evaluate(Transaction *trans,
                 continue;
             }
 
-            TransformationResults values;
+            TransformationsResults transformationsResults;
 
-            executeTransformations(trans, value, values);
+            executeTransformations(trans, value, transformationsResults);
 
-            for (const auto &valueTemp : values) {
+            auto iter = transformationsResults.begin();
+            while (iter != transformationsResults.end()) {
                 bool ret;
-                std::string valueAfterTrans = std::move(*valueTemp.first);
+                auto &valueTemp = *iter;
+                // FIXME: this copy is not necessary.
+                std::string *valueAfterTrans = new std::string(valueTemp.m_after.c_str());
 
-                ret = executeOperatorAt(trans, key, valueAfterTrans, ruleMessage);
+                ret = executeOperatorAt(trans, key, *valueAfterTrans, ruleMessage);
 
                 if (ret == true) {
                     ruleMessage.m_match = m_operator->resolveMatchMessage(trans,
@@ -325,9 +328,20 @@ bool RuleWithOperator::evaluate(Transaction *trans,
                     for (auto &i : v->m_orign) {
                         ruleMessage.m_reference.append(i->toText());
                     }
+                    auto iter2 = transformationsResults.begin();
+                    while (iter2 != transformationsResults.end()) {
+                        if (iter2->m_transformation) {
+                            ruleMessage.m_reference.append(*iter2->m_transformation);
+                        }
+                        if (iter == iter2) {
+                            break;
+                        } else {
+                            ruleMessage.m_reference.append(",");
+                        }
+                        iter2++;
+                    }
 
-                    ruleMessage.m_reference.append(*valueTemp.second);
-                    updateMatchedVars(trans, key, valueAfterTrans);
+                    updateMatchedVars(trans, key, *valueAfterTrans);
                     executeActionsIndependentOfChainedRuleResult(trans,
                         ruleMessage);
 
@@ -335,6 +349,8 @@ bool RuleWithOperator::evaluate(Transaction *trans,
 
                     globalRet = true;
                 }
+                delete valueAfterTrans;
+                iter++;
             }
             delete v;
             v = NULL;
