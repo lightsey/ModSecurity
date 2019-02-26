@@ -74,7 +74,7 @@ RuleWithActions::RuleWithActions(
     if (actions) {
         for (Action *a : *actions) {
             if (a->action_kind == Action::ConfigurationKind) {
-                a->evaluate(this, NULL);
+                a->execute(this, NULL);
                 delete a;
             } else if (a->action_kind == Action::RunTimeOnlyIfMatchKind) {
                 if (dynamic_cast<actions::Capture *>(a)) {
@@ -196,19 +196,19 @@ void RuleWithActions::executeActionsIndependentOfChainedRuleResult(
         ms_dbg_a(trans, 4, "Running [independent] (non-disruptive) " \
             "action: " + *a->m_name.get());
 
-        a->evaluate(this, trans);
+        a->execute(this, trans);
     }
 
     if (m_severity) {
-        m_severity->evaluate(this, trans, ruleMessage);
+        m_severity->execute(this, trans, ruleMessage);
     }
 
     if (m_logData) {
-        m_logData->evaluate(this, trans, ruleMessage);
+        m_logData->execute(this, trans, ruleMessage);
     }
 
     if (m_msg) {
-        m_msg->evaluate(this, trans, ruleMessage);
+        m_msg->execute(this, trans, ruleMessage);
     }
 }
 
@@ -236,7 +236,7 @@ void RuleWithActions::executeActionsAfterFullMatch(Transaction *trans,
     for (actions::Tag *a : m_actionsTag) {
         ms_dbg_a(trans, 4, "Running (non-disruptive) action: " \
             + *a->m_name.get());
-        a->evaluate(this, trans, ruleMessage);
+        a->execute(this, trans, ruleMessage);
     }
 
     /**
@@ -272,7 +272,7 @@ void RuleWithActions::executeAction(Transaction *trans,
     RuleMessage &ruleMessage, Action *a, bool defaultContext) {
     if (a->isDisruptive() == false) {
         ms_dbg_a(trans, 9, "Running action: " + *a->m_name.get());
-        a->evaluate(this, trans, ruleMessage);
+        a->execute(this, trans, ruleMessage);
         return;
     }
 
@@ -285,7 +285,7 @@ void RuleWithActions::executeAction(Transaction *trans,
     if (trans->getRuleEngineState() == RulesSet::EnabledRuleEngine) {
         ms_dbg_a(trans, 4, "Running (disruptive)     action: " + 
             *a->m_name.get() + ".");
-        a->evaluate(this, trans, ruleMessage);
+        a->execute(this, trans, ruleMessage);
         return;
     }
 
@@ -390,7 +390,7 @@ inline void RuleWithActions::executeTransformation(
     std::string *path) {
 
     std::string *oldValue = (*value).get();
-    std::string newValue = a->evaluate(*oldValue, trans);
+    std::string newValue = a->execute(*oldValue, trans);
 
     if (newValue != *oldValue) {
         std::shared_ptr<std::string> u(new std::string(newValue));
