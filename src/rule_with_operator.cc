@@ -13,7 +13,6 @@
  *
  */
 
-#include "modsecurity/rule_with_operator.h"
 
 #include <stdio.h>
 
@@ -41,6 +40,7 @@
 #include "src/actions/set_var.h"
 #include "src/actions/block.h"
 #include "src/variables/variable.h"
+#include "src/rule_with_operator.h"
 
 
 namespace modsecurity {

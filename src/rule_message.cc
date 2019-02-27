@@ -19,9 +19,64 @@
 #include "modsecurity/modsecurity.h"
 #include "modsecurity/transaction.h"
 #include "src/utils/string.h"
+#include "src/rule_with_actions.h"
+
 
 namespace modsecurity {
 
+   /**
+     *
+     * FIXME: RuleMessage is currently too big, doing a lot of
+     * unnecessary data duplication. Needs to be shrink down.
+     *
+     */
+RuleMessage::RuleMessage(RuleWithActions *rule, Transaction *trans) :
+    m_accuracy(rule->getAccuracy()),
+    m_clientIpAddress(trans->m_clientIpAddress),
+    m_data(""),
+    m_id(trans->m_id),
+    m_isDisruptive(false),
+    m_match(""),
+    m_maturity(rule->getMaturity()),
+    m_message(""),
+    m_noAuditLog(false),
+    m_phase(rule->getPhase() - 1),
+    m_reference(""),
+    m_rev(*rule->getRevision()),
+    m_rule(rule),
+    m_ruleFile(rule->getFileName()),
+    m_ruleId(rule->getId()),
+    m_ruleLine(rule->getLineNumber()),
+    m_saveMessage(true),
+    m_serverIpAddress(trans->m_serverIpAddress),
+    m_severity(0),
+    m_uriNoQueryStringDecoded(trans->m_uri_no_query_string_decoded),
+    m_ver(*rule->getVersion())
+    { }
+
+RuleMessage::RuleMessage(RuleMessage *rule) :
+    m_accuracy(rule->m_accuracy),
+    m_clientIpAddress(rule->m_clientIpAddress),
+    m_data(rule->m_data),
+    m_id(rule->m_id),
+    m_isDisruptive(rule->m_isDisruptive),
+    m_match(rule->m_match),
+    m_maturity(rule->m_maturity),
+    m_message(rule->m_message),
+    m_noAuditLog(rule->m_noAuditLog),
+    m_phase(rule->m_phase),
+    m_reference(rule->m_reference),
+    m_rev(rule->m_rev),
+    m_rule(rule->m_rule),
+    m_ruleFile(rule->m_ruleFile),
+    m_ruleId(rule->m_ruleId),
+    m_ruleLine(rule->m_ruleLine),
+    m_saveMessage(rule->m_saveMessage),
+    m_serverIpAddress(rule->m_serverIpAddress),
+    m_severity(rule->m_severity),
+    m_uriNoQueryStringDecoded(rule->m_uriNoQueryStringDecoded),
+    m_ver(rule->m_ver)
+    { }
 
 std::string RuleMessage::_details(const RuleMessage *rm) {
     std::string msg;
