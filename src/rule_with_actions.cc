@@ -29,7 +29,7 @@
 #include "modsecurity/modsecurity.h"
 #include "modsecurity/rule_message.h"
 #include "modsecurity/rules_set.h"
-#include "modsecurity/rule_with_actions.h"
+#include "src/rule_with_actions.h"
 #include "src/actions/block.h"
 #include "src/actions/capture.h"
 #include "src/actions/log_data.h"
