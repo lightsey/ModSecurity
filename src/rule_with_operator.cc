@@ -282,6 +282,7 @@ bool RuleWithOperator::evaluate(Transaction *trans,
         }
         var->evaluate(trans, this, &e);
         for (const VariableValue *v : e) {
+            TransformationsResults transformationsResults;
             const std::string &value = v->m_value;
             const std::string &key = v->m_key;
 
@@ -309,8 +310,6 @@ bool RuleWithOperator::evaluate(Transaction *trans,
                 continue;
             }
 
-            TransformationsResults transformationsResults;
-
             executeTransformations(trans, value, transformationsResults);
 
             auto iter = transformationsResults.begin();
@@ -318,7 +317,8 @@ bool RuleWithOperator::evaluate(Transaction *trans,
                 bool ret;
                 auto &valueTemp = *iter;
                 // FIXME: this copy is not necessary.
-                std::string *valueAfterTrans = new std::string(valueTemp.m_after.c_str());
+                
+                std::string *valueAfterTrans = new std::string(valueTemp.m_after.c_str(), valueTemp.m_after.size());
 
                 ret = executeOperatorAt(trans, key, *valueAfterTrans, ruleMessage);
 
@@ -328,6 +328,7 @@ bool RuleWithOperator::evaluate(Transaction *trans,
                     for (auto &i : v->m_orign) {
                         ruleMessage.m_reference.append(i->toText());
                     }
+
                     auto iter2 = transformationsResults.begin();
                     while (iter2 != transformationsResults.end()) {
                         if (iter2->m_transformation) {
@@ -335,7 +336,7 @@ bool RuleWithOperator::evaluate(Transaction *trans,
                         }
                         if (iter == iter2) {
                             break;
-                        } else {
+                        } else if (iter2->m_transformation) {
                             ruleMessage.m_reference.append(",");
                         }
                         iter2++;

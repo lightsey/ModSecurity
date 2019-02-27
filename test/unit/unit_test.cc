@@ -143,7 +143,9 @@ UnitTest *UnitTest::from_yajl_node(yajl_val &node) {
            u->ret = YAJL_GET_INTEGER(val);
         } else if (strcmp(key, "output") == 0) {
            u->output = std::string(YAJL_GET_STRING(val));
+           std::cout << "A: " << u->output << std::endl;
            json2bin(&u->output);
+           std::cout << "A: " << u->output << std::endl;
            /*
             * Converting \\u0000 to \0 due to the following gcc bug:
             * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53690
