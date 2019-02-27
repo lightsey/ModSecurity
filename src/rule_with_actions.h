@@ -118,7 +118,7 @@ class RuleWithActions : public Rule {
 
     inline void executeTransformation(
         Transaction *transaction,
-        ModSecStackString in,
+        ModSecStackString &in,
         TransformationsResults *ret,
         Transformation *transformation);
 
