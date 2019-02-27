@@ -55,7 +55,9 @@ class Driver;
 }
 }
 
-#include "modsecurity/rule_unconditional.h"
+#include "src/rule_unconditional.h"
+#include "src/rule_with_operator.h"
+#include "src/rule_with_actions.h"
 #include "src/rule_script.h"
 
 #include "src/actions/accuracy.h"
@@ -387,7 +389,7 @@ using modsecurity::operators::Operator;
     a = std::move(c);
 
 
-#line 391 "seclang-parser.hh" // lalr1.cc:403
+#line 393 "seclang-parser.hh" // lalr1.cc:403
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -481,7 +483,7 @@ using modsecurity::operators::Operator;
 
 
 namespace yy {
-#line 485 "seclang-parser.hh" // lalr1.cc:403
+#line 487 "seclang-parser.hh" // lalr1.cc:403
 
   /// A stack with random access from its top.
   template <typename T, typename S = std::vector<T> >
@@ -6442,7 +6444,7 @@ namespace yy {
 
 
 } // yy
-#line 6446 "seclang-parser.hh" // lalr1.cc:403
+#line 6448 "seclang-parser.hh" // lalr1.cc:403
 
 
 
