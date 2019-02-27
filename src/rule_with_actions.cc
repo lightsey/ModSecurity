@@ -293,8 +293,8 @@ void RuleWithActions::executeTransformations(
     TransformationsResults &results) {
     int none = 0;
     
-    ModSecStackString ssin;
-    ssin.assign(in.c_str());
+    ModSecStackString ssin{trans->m_transformationStackAllocator};
+    ssin.assign(in.c_str(), in.size());
     results.push_back(TransformationResult(nullptr, ssin));
 
 
@@ -365,8 +365,8 @@ void RuleWithActions::executeTransformations(
             + std::to_string(results.size()) + \
             " values to be tested.");
     } else {
-        results.pop_front();
-        results.push_back(TransformationResult(nullptr, ssin));
+        //results.push_back(TransformationResult(nullptr, ssin));
+        //results.pop_front();
     }
 }
 
@@ -386,11 +386,11 @@ inline void RuleWithActions::executeTransformation(
 
 inline void RuleWithActions::executeTransformation(
     Transaction *transaction,
-    ModSecStackString in,
+    ModSecStackString &in,
     TransformationsResults *ret,
     Transformation *transformation) {
 
-    ModSecStackString out;
+    ModSecStackString out{transaction->m_transformationStackAllocator};
     transformation->execute(transaction, in, out);
 
     ms_dbg_a(transaction, 9, " T (" + std::to_string(ret->size() - 1) + ") " + \
@@ -400,7 +400,7 @@ inline void RuleWithActions::executeTransformation(
     ret->push_back(
         TransformationResult(
             transformation->m_name.get(),
-            std::move(out)
+            out
         )
     );
 }

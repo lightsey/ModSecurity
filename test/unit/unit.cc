@@ -43,6 +43,8 @@ using modsecurity_test::ModSecurityTestResults;
 using modsecurity::actions::transformations::Transformation;
 using modsecurity::operators::Operator;
 
+modsecurity::ModSecStackString::allocator_type::arena_type stackAllocator;
+
 std::string default_test_path = "test-cases/secrules-language-tests/operators";
 static std::list<std::string> resources;
 
@@ -90,8 +92,8 @@ void perform_unit_test(ModSecurityTest<UnitTest> *test, UnitTest *t,
         }
         delete op;
     } else if (t->type == "tfn") {
-        modsecurity::ModSecStackString in;
-        modsecurity::ModSecStackString out;
+        modsecurity::ModSecStackString in{stackAllocator};
+        modsecurity::ModSecStackString out{stackAllocator};
         std::string ret;
         in.assign(t->input.c_str(), t->input.size());
         Transformation *tfn = Transformation::instantiate("t:" + t->name);

@@ -54,7 +54,7 @@ class TransformationResult {
  public:
     TransformationResult(
         std::string *transformation, 
-        ModSecStackString after) :
+        ModSecStackString &after) :
         m_transformation(transformation),
         m_after(std::move(after)) { };
 
@@ -106,7 +106,7 @@ class RuleWithActions : public Rule {
 
     inline void executeTransformation(
         Transaction *transaction,
-        ModSecStackString in,
+        ModSecStackString &in,
         TransformationsResults *ret,
         Transformation *transformation);
 
