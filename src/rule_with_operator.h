@@ -30,12 +30,12 @@
 #include "modsecurity/variable_value.h"
 #include "modsecurity/rule.h"
 #include "src/rule_with_actions.h"
+#include "modsecurity/string_view.hpp"
 
 #ifdef __cplusplus
 
 namespace modsecurity {
 
-using TransformationsResults = std::list<TransformationResult>;
 
 class RuleWithOperator : public RuleWithActions {
  public:
@@ -54,11 +54,15 @@ class RuleWithOperator : public RuleWithActions {
     inline void getFinalVars(Variables::Variables *vars,
         Variables::Variables *eclusion, Transaction *trans);
 
-    bool executeOperatorAt(Transaction *trasn, std::string key,
-        std::string value, RuleMessage &rm);
+    bool executeOperatorAt(Transaction *transaction,
+        const std::string &key,
+        const bpstd::string_view &value,
+        RuleMessage &rm);
 
-    inline void updateMatchedVars(Transaction *trasn, const std::string &key,
-        const std::string &value);
+    inline void updateMatchedVars(Transaction *transaction,
+        const std::string &key,
+        const bpstd::string_view &value);
+
     inline void cleanMatchedVars(Transaction *trasn);
 
 

@@ -99,7 +99,7 @@ typedef struct Rules_t RulesSet;
 
 namespace modsecurity {
 
-using ModSecStackString = std::basic_string<char, std::char_traits<char>, short_alloc<char, 20000u, alignof(char)>>;
+using ModSecStackString = std::basic_string<char, std::char_traits<char>, short_alloc<char, 1000u, alignof(char)>>;
 
 class ModSecurity;
 class Transaction;
@@ -611,7 +611,6 @@ class Transaction : public TransactionAnchoredVariables, public TransactionSecMa
     std::string m_variableTimeWDay;
     std::string m_variableTimeYear;
 
-     ModSecStackString::allocator_type::arena_type m_transformationStackAllocator;
  private:
     /**
      * Pointer to the callback function that will be called to fill
