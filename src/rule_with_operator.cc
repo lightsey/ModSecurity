@@ -58,12 +58,8 @@ RuleWithOperator::RuleWithOperator(Operator *op,
     std::unique_ptr<std::string> fileName,
     int lineNumber)
     : RuleWithActions(actions, transformations, std::move(fileName), lineNumber),
-    m_chainedRuleChild(nullptr),
-    m_chainedRuleParent(NULL),
-
     m_operator(op),
-    m_variables(_variables),
-    m_unconditional(false)  { /* */ }
+    m_variables(_variables) { /* */ }
 
 
 RuleWithOperator::~RuleWithOperator() {
@@ -105,7 +101,7 @@ inline void RuleWithOperator::cleanMatchedVars(Transaction *trans) {
 
 
 bool RuleWithOperator::executeOperatorAt(Transaction *trans, std::string key,
-    std::string value, std::shared_ptr<RuleMessage> ruleMessage) {
+    std::string value, RuleMessage &ruleMessage) {
 #if MSC_EXEC_CLOCK_ENABLED
     clock_t begin = clock();
     clock_t end;
@@ -117,7 +113,8 @@ bool RuleWithOperator::executeOperatorAt(Transaction *trans, std::string key,
         utils::string::toHexIfNeeded(value)) \
         + "\" (Variable: " + key + ")");
 
-    ret = this->m_operator->evaluateInternal(trans, this, value, ruleMessage);
+    ret = this->m_operator->evaluateInternal(trans, this, value, &ruleMessage);
+
     if (ret == false) {
         return false;
     }
@@ -221,36 +218,21 @@ inline void RuleWithOperator::getFinalVars(Variables::Variables *vars,
 
 
 bool RuleWithOperator::evaluate(Transaction *trans,
-    std::shared_ptr<RuleMessage> ruleMessage) {
+    RuleMessage &ruleMessage) {
     bool globalRet = false;
     Variables::Variables *variables = this->m_variables;
     bool recursiveGlobalRet;
-    bool containsBlock = hasBlockAction();
+    bool containsBlock = false;
     std::vector<std::unique_ptr<VariableValue>> finalVars;
     std::string eparam;
     Variables::Variables vars;
     vars.reserve(4);
     Variables::Variables exclusion;
 
-    if (ruleMessage == NULL) {
-        ruleMessage = std::shared_ptr<RuleMessage>(
-            new RuleMessage(this, trans));
-    }
+    RuleWithActions::evaluate(trans, ruleMessage);
 
-    trans->m_matched.clear();
 
-    if (isMarker() == true) {
-        return true;
-    }
-
-    if (isUnconditional() == true) {
-        ms_dbg_a(trans, 4, "(Rule: " + std::to_string(m_ruleId) \
-            + ") Executing unconditional rule...");
-        executeActionsIndependentOfChainedRuleResult(trans,
-            &containsBlock, ruleMessage);
-        goto end_exec;
-    }
-
+    // FIXME: Make a class runTimeException to handle this cases.
     for (auto &i : trans->m_ruleRemoveById) {
         if (m_ruleId != i) {
             continue;
@@ -289,6 +271,7 @@ bool RuleWithOperator::evaluate(Transaction *trans,
             + " against " \
             + variables + ".");
     }
+
 
     getFinalVars(&vars, &exclusion, trans);
 
@@ -336,31 +319,18 @@ bool RuleWithOperator::evaluate(Transaction *trans,
                 ret = executeOperatorAt(trans, key, valueAfterTrans, ruleMessage);
 
                 if (ret == true) {
-                    ruleMessage->m_match = m_operator->resolveMatchMessage(trans,
+                    ruleMessage.m_match = m_operator->resolveMatchMessage(trans,
                         key, value);
                     for (auto &i : v->m_orign) {
-                        ruleMessage->m_reference.append(i->toText());
+                        ruleMessage.m_reference.append(i->toText());
                     }
 
-                    ruleMessage->m_reference.append(*valueTemp.second);
+                    ruleMessage.m_reference.append(*valueTemp.second);
                     updateMatchedVars(trans, key, valueAfterTrans);
                     executeActionsIndependentOfChainedRuleResult(trans,
                         &containsBlock, ruleMessage);
 
-                    bool isItToBeLogged = ruleMessage->m_saveMessage;
-                    if (hasMultimatch() && isItToBeLogged) {
-                        /* warn */
-                        trans->m_rulesMessages.push_back(*ruleMessage);
-
-                        /* error */
-                        if (!ruleMessage->m_isDisruptive) {
-                            trans->serverLog(ruleMessage);
-                        }
-
-                        RuleMessage *rm = new RuleMessage(this, trans);
-                        rm->m_saveMessage = ruleMessage->m_saveMessage;
-                        ruleMessage.reset(rm);
-                    }
+                    performLogging(trans, ruleMessage, false);
 
                     globalRet = true;
                 }
@@ -404,25 +374,7 @@ end_exec:
     executeActionsAfterFullMatch(trans, containsBlock, ruleMessage);
 
     /* last rule in the chain. */
-    bool isItToBeLogged = ruleMessage->m_saveMessage;
-    if (isItToBeLogged && !hasMultimatch()
-        && !ruleMessage->m_message.empty()) {
-        /* warn */
-        trans->m_rulesMessages.push_back(*ruleMessage);
-
-        /* error */
-        if (!ruleMessage->m_isDisruptive) {
-            trans->serverLog(ruleMessage);
-	}
-    }
-    else if (hasBlock() && !hasMultimatch()) {
-        /* warn */
-        trans->m_rulesMessages.push_back(*ruleMessage);
-        /* error */
-        if (!ruleMessage->m_isDisruptive) {
-            trans->serverLog(ruleMessage);
-        }
-    }
+    performLogging(trans, ruleMessage, true);
 
     return true;
 }

@@ -31,9 +31,9 @@ class ValidateUrlEncoding : public Operator {
     ValidateUrlEncoding()
         : Operator("ValidateUrlEncoding") { }
 
-    bool evaluate(Transaction *transaction, RuleWithOperator *rule,
+    bool evaluate(Transaction *transaction, RuleWithActions *rule,
         const std::string &input,
-        std::shared_ptr<RuleMessage> ruleMessage) override;
+        RuleMessage *ruleMessage) override;
     int validate_url_encoding(const char *input, uint64_t input_length,
         size_t *offset);
 };

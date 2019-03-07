@@ -110,8 +110,8 @@ bool ValidateByteRange::init(const std::string &file,
 }
 
 
-bool ValidateByteRange::evaluate(Transaction *transaction, RuleWithOperator *rule,
-    const std::string &input, std::shared_ptr<RuleMessage> ruleMessage) {
+bool ValidateByteRange::evaluate(Transaction *transaction, RuleWithActions *rule,
+    const std::string &input, RuleMessage *ruleMessage) {
     bool ret = true;
 
     size_t count = 0;

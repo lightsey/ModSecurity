@@ -25,8 +25,8 @@ namespace modsecurity {
 namespace operators {
 
 
-bool DetectXSS::evaluate(Transaction *t, RuleWithOperator *rule,
-    const std::string& input, std::shared_ptr<RuleMessage> ruleMessage) {
+bool DetectXSS::evaluate(Transaction *t, RuleWithActions *rule,
+    const std::string& input, RuleMessage *ruleMessage) {
     int is_xss;
 
     is_xss = libinjection_xss(input.c_str(), input.length());

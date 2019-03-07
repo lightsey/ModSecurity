@@ -33,8 +33,8 @@ class Within : public Operator {
         : Operator("Within", std::move(param)) {
             m_couldContainsMacro = true;
         }
-    bool evaluate(Transaction *transaction, RuleWithOperator *rule,
-        const std::string &str, std::shared_ptr<RuleMessage> ruleMessage);
+    bool evaluate(Transaction *transaction, RuleWithActions *rule,
+        const std::string &str, RuleMessage *ruleMessage);
 };
 
 }  // namespace operators

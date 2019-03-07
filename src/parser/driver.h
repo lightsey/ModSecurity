@@ -55,8 +55,8 @@ class Driver : public RulesSetProperties {
     Driver();
     virtual ~Driver();
 
-    int addSecRule(std::unique_ptr<RuleWithOperator> rule);
-    int addSecAction(std::unique_ptr<RuleWithOperator> rule);
+    int addSecRule(std::unique_ptr<RuleWithActions> rule);
+    int addSecAction(std::unique_ptr<RuleWithActions> rule);
     int addSecMarker(std::string marker, std::unique_ptr<std::string> fileName, int lineNumber);
     int addSecRuleScript(std::unique_ptr<RuleScript> rule);
 
@@ -79,7 +79,7 @@ class Driver : public RulesSetProperties {
 
     std::list<std::string> ref;
     std::string buffer;
-    RuleWithOperator *m_lastRule;
+    RuleWithActions *m_lastRule;
 
     RulesSetPhases m_rulesSetPhases;
 };

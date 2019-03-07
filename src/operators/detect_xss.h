@@ -31,9 +31,9 @@ class DetectXSS : public Operator {
             m_match_message.assign("detected XSS using libinjection.");
         }
 
-    bool evaluate(Transaction *t, RuleWithOperator *rule,
+    bool evaluate(Transaction *t, RuleWithActions *rule,
         const std::string& input,
-        std::shared_ptr<RuleMessage> ruleMessage) override;
+        RuleMessage *ruleMessage) override;
 };
 
 }  // namespace operators
