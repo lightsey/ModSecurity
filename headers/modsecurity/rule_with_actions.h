@@ -181,6 +181,14 @@ class RuleWithActions : public Rule {
         return m_XmlNSs;
     }
 
+    Tags getTags() {
+        Tags tags = m_actionsTag;
+        if (getChainedParent()) {
+            tags.insert( tags.end(), getChainedParent()->getTags().begin(), getChainedParent()->getTags().end() );
+        }
+        return tags;
+    }
+
  private:
     /* actions */
     actions::Action *m_disruptiveAction;
