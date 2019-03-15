@@ -193,16 +193,15 @@ void RuleWithActions::executeActionsIndependentOfChainedRuleResult(
     }
 
     if (m_severity) {
-        m_severity->execute(this, trans, *trans->messageGetLast());
+        m_severity->execute(this, trans);
     }
 
     if (m_logData) {
-        m_logData->execute(this, trans, *trans->messageGetLast());
+        m_logData->execute(this, trans);
     }
 
     if (m_msg) {
-        m_msg->execute(this, trans, *trans->messageGetLast());
-
+        m_msg->execute(this, trans);
     }
 }
 
@@ -230,7 +229,7 @@ void RuleWithActions::executeActionsAfterFullMatch(Transaction *trans) {
     for (actions::Tag *a : m_actionsTag) {
         ms_dbg_a(trans, 4, "Running (non-disruptive) action: " \
             + *a->m_name.get());
-        a->execute(this, trans, *trans->messageGetLast());
+        a->execute(this, trans);
     }
 
     /**
@@ -266,7 +265,7 @@ void RuleWithActions::executeAction(Transaction *trans,
     Action *a, bool defaultContext) {
     if (a->isDisruptive() == false) {
         ms_dbg_a(trans, 9, "Running action: " + *a->m_name.get());
-        a->execute(this, trans, *trans->messageGetLast());
+        a->execute(this, trans);
         return;
     }
 
@@ -279,7 +278,7 @@ void RuleWithActions::executeAction(Transaction *trans,
     if (trans->getRuleEngineState() == RulesSet::EnabledRuleEngine) {
         ms_dbg_a(trans, 4, "Running (disruptive)     action: " + 
             *a->m_name.get() + ".");
-        a->execute(this, trans, *trans->messageGetLast());
+        a->execute(this, trans);
         return;
     }
 
